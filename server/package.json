@@ -1,0 +1,20 @@
+{
+  "name": "chess-review-backend",
+  "version": "1.0.0",
+  "description": "Backend for Chess Review System - A free to use chess review system powered by Stockfish",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "author": "Sudhanshu Choudhary",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.0.2"
+  }
+}
+
