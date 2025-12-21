@@ -6,19 +6,60 @@
 
 .game-review-page h1 {
   font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.game-review-page h2 {
+  font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #333;
 }
 
-.game-review-page p {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+.game-metadata {
+  background-color: #f5f5f5;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
 }
 
-.placeholder {
-  font-style: italic;
-  color: #999;
+.metadata-item {
+  font-size: 1rem;
+  color: #333;
+}
+
+.metadata-item strong {
+  color: #555;
+  margin-right: 0.5rem;
+}
+
+.pgn-display {
   margin-top: 2rem;
+}
+
+.pgn-text {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto;
+  line-height: 1.6;
+  color: #333;
+}
+
+.error-message {
+  padding: 0.75rem;
+  background-color: #fee;
+  color: #c33;
+  border-radius: 4px;
+  border: 1px solid #fcc;
+  margin-top: 1rem;
 }
 

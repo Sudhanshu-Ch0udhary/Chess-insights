@@ -2,17 +2,19 @@ import express from 'express'
 import cors from 'cors'
 import { configDotenv } from 'dotenv'
 import mongoose from 'mongoose'
+import gamesRouter from './routes/games.js'
 
 configDotenv()
 
 const app = express()
 const port = process.env.PORT || 3000
+const mongodb_uri = process.env.MONGODB_URI
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({ origin: '*' }))
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(mongodb_uri)
   .then(() => {
     console.log('MongoDB connected successfully');
   })
@@ -20,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error('MongoDB connection error:', err);
   })
 
-// Healthcheck route
+app.use('/api/games', gamesRouter);
 app.get('/api/health', (_req, res) => {
   res.status(200).json({ 
     status: 'ok',
