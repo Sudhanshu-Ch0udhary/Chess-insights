@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import MoveList from '../components/MoveList'
 import './GameReviewPage.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
@@ -9,6 +10,11 @@ function GameReviewPage() {
   const [game, setGame] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [currentMoveIndex, setCurrentMoveIndex] = useState(0)
+
+  const handleMoveSelect = (moveIndex) => {
+    setCurrentMoveIndex(moveIndex)
+  }
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -60,33 +66,50 @@ function GameReviewPage() {
   return (
     <div className="game-review-page">
       <h1>Game Review</h1>
-      
-      <div className="game-metadata">
-        <div className="metadata-item">
-          <strong>Event:</strong> {game.event}
-        </div>
-        <div className="metadata-item">
-          <strong>White:</strong> {game.white}
-        </div>
-        <div className="metadata-item">
-          <strong>Black:</strong> {game.black}
-        </div>
-        <div className="metadata-item">
-          <strong>Date:</strong> {game.date}
-        </div>
-        <div className="metadata-item">
-          <strong>Result:</strong> {game.result}
-        </div>
-        {game.createdAt && (
-          <div className="metadata-item">
-            <strong>Saved:</strong> {new Date(game.createdAt).toLocaleString()}
-          </div>
-        )}
-      </div>
 
-      <div className="pgn-display">
-        <h2>PGN</h2>
-        <pre className="pgn-text">{game.pgn}</pre>
+      <div className="game-layout">
+        <div className="game-main">
+          <div className="game-metadata">
+            <div className="metadata-item">
+              <strong>Event:</strong> {game.event}
+            </div>
+            <div className="metadata-item">
+              <strong>White:</strong> {game.white}
+            </div>
+            <div className="metadata-item">
+              <strong>Black:</strong> {game.black}
+            </div>
+            <div className="metadata-item">
+              <strong>Date:</strong> {game.date}
+            </div>
+            <div className="metadata-item">
+              <strong>Result:</strong> {game.result}
+            </div>
+            {game.createdAt && (
+              <div className="metadata-item">
+                <strong>Saved:</strong> {new Date(game.createdAt).toLocaleString()}
+              </div>
+            )}
+          </div>
+
+          <div className="board-placeholder">
+            <div className="board-container">
+              <h3>Chess Board</h3>
+              <div className="board-visualization">
+                <p>Board visualization will be added in Milestone 3</p>
+                <p>Current move: {currentMoveIndex === 0 ? 'Starting position' : `After move ${currentMoveIndex}`}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="game-sidebar">
+          <MoveList
+            moves={game.moves}
+            currentMoveIndex={currentMoveIndex}
+            onMoveSelect={handleMoveSelect}
+          />
+        </div>
       </div>
     </div>
   )

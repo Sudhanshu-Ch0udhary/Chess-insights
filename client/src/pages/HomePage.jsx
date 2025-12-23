@@ -8,7 +8,10 @@ function HomePage() {
       <p>Review and analyze your chess games</p>
       <div className="home-actions">
         <Link to="/games/new" className="btn btn-primary">
-          Review a Game
+          Upload New Game
+        </Link>
+        <Link to="/games" className="btn btn-secondary">
+          View My Games
         </Link>
       </div>
     </div>

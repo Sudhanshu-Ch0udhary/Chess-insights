@@ -26,6 +26,15 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  pgnHash: {
+    type: String,
+    required: true,
+    index: true // Index for fast duplicate lookups
+  },
+  moves: {
+    type: [String],
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now

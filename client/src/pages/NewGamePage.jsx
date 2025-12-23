@@ -24,6 +24,13 @@ function NewGamePage() {
         body: JSON.stringify({ pgn }),
       })
 
+      if (response.status === 409) {
+        // Game already exists - redirect to existing game
+        const errorData = await response.json()
+        navigate(`/games/${errorData.existingGame.id}`)
+        return
+      }
+
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to create game')
