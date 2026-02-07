@@ -23,7 +23,6 @@ function GameReviewPage() {
   }
 
   const handleAnnotationUpdate = (updatedAnnotation) => {
-    // Update the game state with the new annotation
     setGame(prevGame => {
       const newAnnotations = [...(prevGame.annotations || [])]
       const existingIndex = newAnnotations.findIndex(
@@ -37,7 +36,6 @@ function GameReviewPage() {
           newAnnotations.push(updatedAnnotation)
         }
       } else {
-        // Remove annotation if it was deleted
         if (existingIndex !== -1) {
           newAnnotations.splice(existingIndex, 1)
         }
@@ -46,8 +44,6 @@ function GameReviewPage() {
       return { ...prevGame, annotations: newAnnotations }
     })
   }
-
-  // Get current move's annotation
   const getCurrentAnnotation = () => {
     if (!game || !game.annotations) return null
     return game.annotations.find(

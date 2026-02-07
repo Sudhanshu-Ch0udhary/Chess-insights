@@ -1,4 +1,3 @@
-// Stockfish Worker path - matches file in client/public/
 const STOCKFISH_PATH = '/stockfish-17.1-lite-single-03e3232.js'
 
 let engine = null
@@ -40,67 +39,75 @@ export function initStockfish(onMessage) {
  * @param {number} depth - Search depth
  * @returns {Promise<{evaluation: number, bestMove: string, pv: string[]}>}
  */
-export function analyzePosition(fen, depth = 14) {
+
+export function analyzePosition(fen, depth = 16, multiPV = 3) {
   return new Promise((resolve, reject) => {
     if (!engine || !ready) {
       return reject(new Error('Engine not ready'))
     }
 
-    let evaluation = 0
-    let bestMove = null
-    let pv = []
-    let resolved = false
+    const lines = {}
+    let finished = false
 
-    const handler = (msg) => {
-      if (typeof msg !== 'string' || resolved) return
+    const timeout = setTimeout(() => {
+      if (!finished) {
+        finished = true
+        engine.postMessage('stop')
+        reject(new Error('Stockfish timeout'))
+      }
+    }, 25000)
 
-      // Parse evaluation (centipawns)
-      const scoreMatch = msg.match(/score\s+(?:cp|mate)\s+(-?\d+)/)
-      if (scoreMatch && !msg.includes('lowerbound') && !msg.includes('upperbound')) {
-        evaluation = parseInt(scoreMatch[1])
+    engine.onmessage = (e) => {
+      const msg = e.data
+      if (typeof msg !== 'string' || finished) return
+
+      const mp = msg.match(/multipv\s+(\d+)/)
+      const multipv = mp ? parseInt(mp[1]) : 1
+
+      if (!lines[multipv]) {
+        lines[multipv] = {
+          multipv,
+          eval: 0,
+          mate: null,
+          pv: []
+        }
       }
 
-      // Parse principal variation
-      const pvMatch = msg.match(/pv\s+([^\s]+(?:\s+[^\s]+)*)/)
-      if (pvMatch) {
-        pv = pvMatch[1].split(' ').filter((m) => m)
+      const cp = msg.match(/score cp (-?\d+)/)
+      if (cp) {
+        lines[multipv].eval = parseInt(cp[1]) / 100
+        lines[multipv].mate = null
       }
 
-      // Parse best move
-      if (msg.includes('bestmove')) {
-        const m = msg.match(/bestmove\s+(\S+)/)
-        if (m) bestMove = m[1]
+      const mate = msg.match(/score mate (-?\d+)/)
+      if (mate) {
+        lines[multipv].mate = parseInt(mate[1])
+        lines[multipv].eval = mate[1] > 0 ? 100 : -100
+      }
 
-        resolved = true
-        engine.onmessage = null // Remove handler
+      const pv = msg.match(/ pv (.+)/)
+      if (pv) {
+        lines[multipv].pv = pv[1].trim().split(/\s+/)
+      }
+
+      if (msg.startsWith('bestmove')) {
+        clearTimeout(timeout)
+        finished = true
+
         resolve({
-          evaluation: evaluation / 100,
-          bestMove,
-          pv
+          lines: Object.values(lines).sort((a, b) => a.multipv - b.multipv)
         })
       }
     }
 
-    engine.onmessage = (e) => handler(e.data)
-
     engine.postMessage('ucinewgame')
     engine.postMessage(`position fen ${fen}`)
+    engine.postMessage(`setoption name MultiPV value ${multiPV}`)
     engine.postMessage(`go depth ${depth}`)
-
-    // Timeout
-    setTimeout(() => {
-      if (!resolved) {
-        resolved = true
-        engine.postMessage('stop')
-        reject(new Error('Analysis timeout'))
-      }
-    }, 30000)
   })
 }
 
-/**
- * Classify move quality based on eval change
- */
+
 function classifyMove(evalDiff, isBestMove) {
   if (isBestMove) return 'best'
   const absDiff = Math.abs(evalDiff)
