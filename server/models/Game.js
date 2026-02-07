@@ -22,6 +22,10 @@ const gameSchema = new mongoose.Schema({
     enum: ['1-0', '0-1', '1/2-1/2', '*'],
     default: '*'
   },
+  opening: {
+    type: String,
+    default: ''
+  },
   pgn: {
     type: String,
     required: true
@@ -55,6 +59,11 @@ const gameSchema = new mongoose.Schema({
       default: 'manual'
     }
   }],
+  status: {
+    type: String,
+    enum: ['uploaded', 'analyzed'],
+    default: 'uploaded'
+  },
   ownerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -70,4 +79,3 @@ const gameSchema = new mongoose.Schema({
 const Game = mongoose.model('Game', gameSchema);
 
 export default Game;
-
