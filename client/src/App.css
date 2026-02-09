@@ -10,11 +10,10 @@ body {
   margin: 0;
   padding: 0;
   background-color: #302e2b;
-  /* Dark background */
   color: #c5c5c5;
-  /* Light text for page (headers etc) */
   font-family: 'Segoe UI', system-ui, sans-serif;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 button {
